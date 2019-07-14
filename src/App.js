@@ -5,7 +5,6 @@ import "./App.css";
 import { Provider } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Posts from "./components/Post";
-import Register from "./components/Register";
 import Navbar from "./components/Navbar";
 import WebcamCapture from "./components/Webcam";
 import store from "./store";
@@ -15,8 +14,7 @@ function App() {
     <BrowserRouter>
       <Provider store={store}>
         <Navbar />        
-            <WebcamCapture />
-            <Register />
+            <WebcamCapture />            
             <hr />
             <Posts />
       </Provider>
