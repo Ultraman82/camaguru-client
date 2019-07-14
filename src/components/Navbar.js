@@ -81,7 +81,7 @@ export default class Navbar extends Component {
             },
             body: JSON.stringify({
               username: this.username.value,
-              password: wh.hash(this.password.value)
+              password: wp.encSync(this.password.value, 'hex')
             })
           })
             .then(response => response.json())
@@ -118,7 +118,7 @@ export default class Navbar extends Component {
       },
       body: JSON.stringify({
         username: this.username.value,        
-        password: wh.hash(this.password.value),
+        password: wp.encSync(this.password.value, 'hex'),
         email: this.email.value
       })
     })
