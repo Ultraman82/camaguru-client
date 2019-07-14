@@ -55,13 +55,13 @@ export default class WebcamCapture extends React.Component {
         left: "0px"
       };
     } else {
-      pic = "images/bold.png";
+      pic = "images/42.png";
       set = {
-        width: "20px",
-        height: "20px",
+        width: "100px",
+        height: "50px",
         position: "absolute",
-        top: "0",
-        left: "0px"
+        top: "120px",
+        left: "100px"
       };
     }
 
@@ -108,6 +108,8 @@ export default class WebcamCapture extends React.Component {
               <input
                 type="radio"
                 name="drone"
+                id="trump"
+                value="trump"
                 onClick={() => this.setState({ icon: 0 })}
                 checked
               />
@@ -117,6 +119,8 @@ export default class WebcamCapture extends React.Component {
               <input
                 type="radio"
                 name="drone"
+                id="bold"
+                value="bold"
                 onClick={() => this.setState({ icon: 1 })}
               />
               <label for="bold">Bold</label>
@@ -125,6 +129,8 @@ export default class WebcamCapture extends React.Component {
               <input
                 type="radio"
                 name="drone"
+                value="funny"
+                id="funny"                
                 onClick={() => this.setState({ icon: 2 })}
               />
               <label for="funny">Funny</label>
@@ -140,13 +146,7 @@ export default class WebcamCapture extends React.Component {
             />
             <img
               src={pic}
-              style={{
-                width: "200px",
-                height: "200px",
-                position: "absolute",
-                top: "0",
-                left: "0"
-              }}
+              style={set}
               alt=""
             />
           </div>
