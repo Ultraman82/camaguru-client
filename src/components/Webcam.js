@@ -1,11 +1,8 @@
 import React from "react";
 import Webcam from "react-webcam";
+import { baseUrl } from "../actions/baseUrl";
 import base64Img from "base64-img";
-/* export default class Component extends React.Component {
-  render() {
-    return <Webcam />;
-  }
-} */
+
 export default class WebcamCapture extends React.Component {
   constructor(props) {
     super(props);
@@ -18,11 +15,45 @@ export default class WebcamCapture extends React.Component {
   capture = () => {
     /* let added = this.state.images.concat(this.webcam.getScreenshot()); */
     this.setState({
-      images: [{image:this.webcam.getScreenshot(), icon:this.state.icon}, ...this.state.images],      
+      images: [...this.state.images, {image:this.webcam.getScreenshot(), icon:this.state.icon}],      
     });
     /* this.setState({
       images: added
     }); */
+  };
+  pushImage = (index, icon) => {
+    fetch(baseUrl + "picture", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: "edgar"        ,
+        image: this.state.images[index]["image"].split(',')[1],
+        date: new Date(),
+        icon: icon
+      })
+    })
+      .then(response => response.json())
+      .then(response => {
+        if (response.message === "An error occured inserting the picture.") {
+          alert("An error occured inserting the picture.");
+        } else if (response.message === "Success") {          
+          alert("Picture was posted successfuly");          
+        }
+        console.log("response", response);
+      })
+      .catch(error => console.log("error:", error));    
+  }
+  
+  handleDelete = (index, icon) => {        
+    return(
+      <div>
+        <button onClick={() => this.setState({images: this.state.images.filter(image => index !== this.state.images.indexOf(image))})}>Delete Item</button>
+        <button onClick={() => this.pushImage(index, icon)}>Post Item</button>
+      </div>
+      
+    );
   };
 
   renderSelect = () => {    
@@ -58,7 +89,7 @@ export default class WebcamCapture extends React.Component {
         id="funny"                
         onClick={() => this.setState({ icon: 2 })}
       />
-      <label for="funny">Funny</label>
+      <label for="funny">42</label>
     </div>
     </div>      
     )
@@ -69,30 +100,24 @@ export default class WebcamCapture extends React.Component {
     let set = {};
     if (icon == 0) {
       pic = "images/trump.png";
-      set = {
-        width: "200px",
-        height: "200px",
+      set = {        
         position: "absolute",
         top: "0",
-        left: "0px"
+        left: "30px"
       };
     } else if (icon == 1) {
       pic = "images/bold.png";
-      set = {
-        width: "150px",
-        height: "150px",
+      set = {        
         position: "absolute",
         top: "0",
-        left: "0px"
+        left: "200px"
       };
     } else {
       pic = "images/42.png";
-      set = {
-        width: "200px",
-        height: "10px",
+      set = {        
         position: "absolute",
-        top: "120px",
-        left: "100px"
+        top: "200px",
+        left: "200px"
       };
     }
     return(
@@ -108,11 +133,9 @@ export default class WebcamCapture extends React.Component {
     };
 
     let images = this.state.images;
-    
-
     const snapshots = images.map(image => {      
       return (        
-        <div key={images.indexOf(image)} className="row" style={{margin:"20px"}}>
+        <div key={images.indexOf(image)} className="row" style={{margin:"50px"}}>
           <div style={{ position: "relative", left: "0", top: "0" }}>
             <img
               src={image.image}
@@ -120,14 +143,15 @@ export default class WebcamCapture extends React.Component {
               alt=""
             />
             {this.renderPic(image.icon)}            
-          </div>
+          </div>                    
+          {this.handleDelete(images.indexOf(image), image.icon)}
         </div>
       );
     });
 
     return (
       <div className="row">
-        <div className="col-6" style={{ position: "relative", left: "0", top: "0", margin:"50px" }}>
+        <div className="col-sm" style={{ position: "relative", left: "0", top: "0", margin:"50px" }}>
           <Webcam
             audio={false}
             height={500}
@@ -135,13 +159,13 @@ export default class WebcamCapture extends React.Component {
             screenshotFormat="image/jpeg"
             width={500}
             videoConstraints={videoConstraints}
-            style={{ position: "relative", bottom: "110px", right: "20px"}}
+            style={{ position: "relative", bottom: "110px", right: "15px"}}
           />                    
             {this.renderPic(this.state.icon)}          
             {this.renderSelect()}
             <button onClick={this.capture}>Capture photo</button>
         </div>        
-        <div className="col-6">{snapshots}</div>
+        <div className="col-sm">{snapshots}</div>
       </div>
     );
   }
