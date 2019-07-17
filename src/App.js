@@ -11,13 +11,14 @@ import store from "./store";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Provider store={store}>
-        <Navbar />        
-            <WebcamCapture />            
-            <hr />
-            <Posts />
-      </Provider>
+    <BrowserRouter>    
+      <Navbar /> 
+      <Switch>
+        <Provider store={store}>
+          <Route exact path="/" component={WebcamCapture} />
+          <Route exact path="/list" component={Posts} />                      
+        </Provider>
+      </Switch>
     </BrowserRouter>
   );
 }

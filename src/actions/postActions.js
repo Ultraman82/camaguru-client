@@ -1,24 +1,26 @@
 import { FETCH_POSTS, NEW_POST } from "./type";
-import baseUrl from "./baseUrl";
+import { baseUrl } from "./baseUrl";
 
 export const fetchPosts = () => dispatch => {
-  fetch("https://jsonplaceholder.typicode.com/posts")
+  fetch(baseUrl + "pictures/0")
     .then(res => res.json())
-    .then(posts =>
+    .then(posts =>      
       dispatch({
         type: FETCH_POSTS,
-        payload: posts
-      })
+        payload: posts.pictures
+      })    
     );
 };
 
-export const createPost = postData => dispatch => {
-  fetch("https://jsonplaceholder.typicode.com/posts", {
+export const createPost = (image_id, username) => dispatch => {
+  fetch(baseUrl + "picedit/" + image_id, {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
-    body: JSON.stringify(postData)
+    body: {      
+      "username":username
+    }
   })
     .then(res => res.json())
     .then(post =>

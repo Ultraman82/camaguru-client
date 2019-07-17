@@ -1,7 +1,7 @@
 import React from "react";
 import Webcam from "react-webcam";
 import { baseUrl } from "../actions/baseUrl";
-import base64Img from "base64-img";
+
 
 export default class WebcamCapture extends React.Component {
   constructor(props) {
@@ -31,7 +31,8 @@ export default class WebcamCapture extends React.Component {
         username: "edgar"        ,
         image: this.state.images[index]["image"].split(',')[1],
         date: new Date(),
-        icon: icon
+        icon: icon,
+        like: ""
       })
     })
       .then(response => response.json())

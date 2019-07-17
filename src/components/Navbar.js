@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import logo from "../logo.png";
 import styled from "styled-components";
 import { ButtonContainer } from "./Button";
 import { baseUrl } from "../actions/baseUrl";
@@ -33,8 +32,7 @@ export default class Navbar extends Component {
     this.toggleSignup = this.toggleSignup.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.handleSignup = this.handleSignup.bind(this);
-    this.handleUnsign = this.handleUnsign.bind(this);
-    //  this.sendMail = this.sendMail.bind(this);
+    this.handleUnsign = this.handleUnsign.bind(this);    
   }
 
   toggleModal() {
