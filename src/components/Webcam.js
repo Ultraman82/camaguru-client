@@ -2,7 +2,6 @@ import React from "react";
 import Webcam from "react-webcam";
 import { baseUrl } from "../actions/baseUrl";
 
-
 export default class WebcamCapture extends React.Component {
   constructor(props) {
     super(props);
@@ -22,13 +21,15 @@ export default class WebcamCapture extends React.Component {
     }); */
   };
   pushImage = (index, icon) => {
+    //console.log(this.state.images[index]);
     fetch(baseUrl + "picture", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "JWT " + localStorage.token
       },
       body: JSON.stringify({
-        username: "edgar"        ,
+        username: localStorage.username,
         image: this.state.images[index]["image"].split(',')[1],
         date: new Date(),
         icon: icon,
@@ -51,7 +52,13 @@ export default class WebcamCapture extends React.Component {
     return(
       <div>
         <button onClick={() => this.setState({images: this.state.images.filter(image => index !== this.state.images.indexOf(image))})}>Delete Item</button>
-        <button onClick={() => this.pushImage(index, icon)}>Post Item</button>
+        <button onClick={() => {
+            if (localStorage.username)
+              this.pushImage(index, icon)
+            else
+              alert("Log in first") 
+            }
+          }>Post Item</button>
       </div>
       
     );
@@ -67,10 +74,9 @@ export default class WebcamCapture extends React.Component {
         name="drone"
         id="trump"
         value="trump"
-        onClick={() => this.setState({ icon: 0 })}
-        checked
+        onClick={() => this.setState({ icon: 0 })}        
       />
-      <label for="trump">Trump</label>
+      <label htmlFor="trump">Trump</label>
     </div>
     <div>
       <input
@@ -80,7 +86,7 @@ export default class WebcamCapture extends React.Component {
         value="bold"
         onClick={() => this.setState({ icon: 1 })}
       />
-      <label for="bold">Bold</label>
+      <label htmlFor="bold">Bold</label>
     </div>
     <div>
       <input
@@ -90,7 +96,7 @@ export default class WebcamCapture extends React.Component {
         id="funny"                
         onClick={() => this.setState({ icon: 2 })}
       />
-      <label for="funny">42</label>
+      <label htmlFor="funny">42</label>
     </div>
     </div>      
     )
@@ -99,14 +105,14 @@ export default class WebcamCapture extends React.Component {
   renderPic = (icon) => {
     let pic = "";
     let set = {};
-    if (icon == 0) {
+    if (icon === 0) {
       pic = "images/trump.png";
       set = {        
         position: "absolute",
         top: "0",
         left: "30px"
       };
-    } else if (icon == 1) {
+    } else if (icon === 1) {
       pic = "images/bold.png";
       set = {        
         position: "absolute",

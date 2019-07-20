@@ -53,7 +53,13 @@ class FetchComments extends Component{
             </div>
 
               <Row className="form-group">
-                  <Button outline onClick={this.toggleModal}><span className="fa fa-edit fa-lg"></span> Submit a comment</Button>                
+                  <Button outline onClick={() =>{
+                    if (localStorage.username)
+                      this.toggleModal();
+                    else
+                      alert("Log in first") 
+                    }}>
+                      <span className="fa fa-edit fa-lg"></span> Submit a comment</Button>                
               </Row>
               <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                   <ModalHeader >Comment</ModalHeader>
@@ -61,6 +67,8 @@ class FetchComments extends Component{
                     <form onSubmit={this.onSubmit}>                    
                       <div>                          
                         <textarea
+                          rows="4"
+                          cols="50"
                           name="comment"
                           onChange={this.onChange}
                           value={this.state.body}

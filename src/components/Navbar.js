@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { ButtonContainer } from "./Button";
 import { baseUrl } from "../actions/baseUrl";
 import {
   Button,
@@ -12,11 +11,8 @@ import {
   FormGroup,
   Input,
   Label
-  //FormFeedback,FormText
 } from "reactstrap";
 const wp = require('whirlpool-js');
-
-//import nodemailer from "nodemailer";
 
 export default class Navbar extends Component {
   constructor(props) {
@@ -25,14 +21,20 @@ export default class Navbar extends Component {
       isModalOpen: false,
       isSignupOpen: false,
       username: "",
-      token: ""
+      token: "",
+      notify: true
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.toggleSignup = this.toggleSignup.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
-    this.handleSignup = this.handleSignup.bind(this);
-    this.handleUnsign = this.handleUnsign.bind(this);    
+    this.handleSignup = this.handleSignup.bind(this);        
+  }
+
+  componentWillMount() {
+    this.setState({
+      username: localStorage.username
+    })
   }
 
   toggleModal() {
@@ -40,32 +42,7 @@ export default class Navbar extends Component {
   }
   toggleSignup() {
     this.setState({ isSignupOpen: !this.state.isSignupOpen });
-  }
-  /* sendMail() {
-    console.log("sendingEmaul");
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-         user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS
-   
-      }
-    });
-    var mailOptions = {
-      from: "exelcior99@gmail.com",
-      to: "lomupor@quickemail.info",
-      subject: "Sending Email using Node.js",
-      text: "That was easy!"
-    };
-    transporter.sendMail(mailOptions, function(error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    });
-    event.preventDefault();
-  } */
+  }  
 
   handleLogin(event) {
     fetch(baseUrl + "verify/" + this.username.value)
@@ -88,7 +65,7 @@ export default class Navbar extends Component {
                 this.toggleModal();
                 this.setState({
                   username: this.username.value,
-                  token: response.access_token
+                  token: response.access_token,                  
                 });
                 localStorage.username = this.username.value;
                 localStorage.token = response.access_token;
@@ -135,50 +112,40 @@ export default class Navbar extends Component {
     event.preventDefault();
   }
 
-  handleUnsign(event) {
-    fetch(`${baseUrl}user/${this.state.username}`, {
-      method: "DELETE"
-    })
-      .then(response => response.json())
-      .then(response => {
-        console.log("response", response);
-      })
-      .catch(error => console.log("error:", error));
-
-    event.preventDefault();
-  }
-
   handleLogout() {
     localStorage.removeItem("token");
-    //localStorage.removeItem("username");
     localStorage.username = "";
     this.setState({ username: "" });
   }
 
   render() {
-    const isLoggedIn = this.state.username !== "";
-    const isAdmin = localStorage.username === "edgar";
+    const isLoggedIn = this.state.username !== "";    
     return (
-      <NavWrapper className="navbar navbar-expand-sm navbar-dark px-sm-5">
-        {/* <Link to="/">
-            <img src={logo} alt="store" className="navbar-brand" />
-            </Link> */}
-        <ul className="navbar-nav align-items-center">
-          <li className="nav-item ml-5">
+      <NavWrapper className="navbar navbar-expand-sm navbar-dark px-sm-5">                    
+        <div className="align-items-center">
+          <div className="ml-5">
+            <Link to="/list" className="nav-link">list of pphotoes</Link>
+          </div>
+          <div className="ml-5">
             <Link to="/" className="nav-link">
-              Homt
+              taking photo
+            </Link>
+          </div>
+        </div>        
+        {/* <ul className="navbar-nav align-items-center">
+          <li className="nav-item ml-5">
+          <Link to="/" className="nav-link">Taking Photoes</Link>
+          </li>
+          <li className="nav-item ml-5">
+            <Link to="/list" className="nav-link">
+              List of Photoes
             </Link>
           </li>
-        </ul>
-        {isLoggedIn ? (
-          <div>
+        </ul>         */}
+          {isLoggedIn ? (          
             <Button onClick={this.handleLogout} style={{ margin: "10px" }}>
               Log Out
             </Button>
-            <Button onClick={this.handleUnsign} color="danger">
-              Unsign
-            </Button>
-          </div>
         ) : (
           <div>
             <Button
@@ -192,96 +159,57 @@ export default class Navbar extends Component {
               Signup
             </Button>
           </div>
-        )}
-
-        {isAdmin ? (
-          <div>
-            <Link to="/manageusers" className="ml-auto">
-              <ButtonContainer>
-                <span className="mr-2">
-                  <i className="fas fa-user-edit" />
-                </span>
-                Edit Users
-              </ButtonContainer>
-            </Link>
-            <Link to="/manageitems" className="ml-auto">
-              <ButtonContainer>
-                <span className="mr-2">
-                  <i className="fas fa-edit" />
-                </span>
-                Edit Items
-              </ButtonContainer>
-            </Link>
-            <Link to="/manageorders" className="ml-auto">
-              <ButtonContainer>
-                <span className="mr-2">
-                  <i className="fas fa-edit" />
-                </span>
-                Check Orders
-              </ButtonContainer>
-            </Link>
-          </div>
-        ) : (
-          <Link to="/cart" className="ml-auto">
-            <ButtonContainer>
-              <span className="mr-2">
-                <i className="fas fa-cart-plus" />
-              </span>
-              my cart
-            </ButtonContainer>
-          </Link>
-        )}
-
-        <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
-          <ModalHeader>Login</ModalHeader>
-          <ModalBody>
-            <Form onSubmit={this.handleLogin}>
-              <FormGroup>
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  type="text"
-                  id="username"
-                  name="username"
-                  innerRef={input => (this.username = input)}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  innerRef={input => (this.password = input)}
-                />
-              </FormGroup>
-              {/* <FormGroup>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                  title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                  required
-                />
-              </FormGroup> */}
-              <FormGroup check>
-                <Label check>
+        )}        
+          <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+            <ModalHeader>Login</ModalHeader>
+            <ModalBody>
+              <Form onSubmit={this.handleLogin}>
+                <FormGroup>
+                  <Label htmlFor="username">Username</Label>
                   <Input
-                    type="checkbox"
-                    name="remember"
-                    innerRef={input => (this.remember = input)}
+                    type="text"
+                    id="username"
+                    name="username"
+                    innerRef={input => (this.username = input)}
                   />
-                  Remember me
-                </Label>
-              </FormGroup>
-              <Button type="submit" value="submit" color="primary">
-                Login
-              </Button>
-            </Form>
+                </FormGroup>
+                <FormGroup>
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    innerRef={input => (this.password = input)}
+                  />
+                </FormGroup>
+                {/* <FormGroup>
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                    required
+                  />
+                </FormGroup> */}
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type="checkbox"
+                      name="remember"
+                      innerRef={input => (this.remember = input)}
+                    />
+                    Remember me
+                  </Label>
+                </FormGroup>
+                <Button type="submit" value="submit" color="primary">
+                  Login
+                </Button>
+              </Form>
           </ModalBody>
-        </Modal>
-        <Modal isOpen={this.state.isSignupOpen} toggle={this.toggleSignup}>
+          </Modal>
+          <Modal isOpen={this.state.isSignupOpen} toggle={this.toggleSignup}>
           <ModalHeader>Signup</ModalHeader>
           <ModalBody>
             <Form onSubmit={this.handleSignup}>
@@ -338,7 +266,7 @@ export default class Navbar extends Component {
               </Button>
             </Form>
           </ModalBody>
-        </Modal>
+        </Modal>        
       </NavWrapper>
     );
   }
