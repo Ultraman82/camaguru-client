@@ -5,11 +5,18 @@ import { baseUrl } from "../actions/baseUrl";
 export default class WebcamCapture extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { images: [], icon:0 };
+    this.state = { 
+      images: [],
+      icon:0
+      };
   }
   setRef = webcam => {
     this.webcam = webcam;
   };
+
+  componentWillMount() {
+    this.setState({username:localStorage.username})
+  }
 
   capture = () => {
     /* let added = this.state.images.concat(this.webcam.getScreenshot()); */
@@ -156,24 +163,30 @@ export default class WebcamCapture extends React.Component {
       );
     });
 
-    return (
-      <div className="row">
-        <div className="col-sm" style={{ position: "relative", left: "0", top: "0", margin:"50px" }}>
-          <Webcam
-            audio={false}
-            height={500}
-            ref={this.setRef}
-            screenshotFormat="image/jpeg"
-            width={500}
-            videoConstraints={videoConstraints}
-            style={{ position: "relative", bottom: "110px", right: "15px"}}
-          />                    
-            {this.renderPic(this.state.icon)}          
-            {this.renderSelect()}
-            <button onClick={this.capture}>Capture photo</button>
-        </div>        
-        <div className="col-sm">{snapshots}</div>
-      </div>
-    );
+    if(this.state.username !== ""){
+      return (            
+        <div className="row">
+          <div className="col-sm" style={{ position: "relative", left: "0", top: "0", margin:"50px" }}>
+            <Webcam
+              audio={false}
+              height={500}
+              ref={this.setRef}
+              screenshotFormat="image/jpeg"
+              width={500}
+              videoConstraints={videoConstraints}
+              style={{ position: "relative", bottom: "110px", right: "15px"}}
+            />                    
+              {this.renderPic(this.state.icon)}          
+              {this.renderSelect()}
+              <button onClick={this.capture}>Capture photo</button>
+          </div>        
+          <div className="col-sm">{snapshots}</div>
+        </div>
+      );
+    } else {
+      return (
+        <h1>You need to log in first to take a photo</h1>
+      )
+    }
   }
 }

@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Posts from "./components/Post";
 import Navbar from "./components/Navbar";
+import EditInfo from "./components/EditInfo";
 import WebcamCapture from "./components/Webcam";
 import store from "./store";
 
@@ -15,8 +16,9 @@ function App() {
     <Navbar />
       <Switch>                    
       <Provider store={store}>      
-          <Route exact path="/" component={WebcamCapture} />
-          <Route exact path="/list" component={Posts} />                                                                
+          <Route exact path="/camera" component={WebcamCapture} />
+          <Route exact path="/editinfo" component={EditInfo} />
+          <Route exact path="/" component={Posts} />                                                                
       </Provider>
       </Switch>
     </BrowserRouter>

@@ -29,6 +29,8 @@ export default class Navbar extends Component {
     this.toggleSignup = this.toggleSignup.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.handleSignup = this.handleSignup.bind(this);        
+    this.handleFroget = this.handleForget.bind(this);        
+    //this.handleEditinfo = this.handleEditinfo.binf(this);
   }
 
   componentWillMount() {
@@ -43,6 +45,19 @@ export default class Navbar extends Component {
   toggleSignup() {
     this.setState({ isSignupOpen: !this.state.isSignupOpen });
   }  
+
+  handleForget() {    
+    let email = prompt("Please enter your email to get the reset email");    
+    if (email != null) {
+      fetch(baseUrl + "resetpass/" + encodeURI(email), {method: "POST"})
+      .then(response => response.json())
+      .then(response => {                
+        console.log(response);      
+      })
+      .catch(error => console.log(error));
+      alert("Check your email to see your temporal password");
+    }
+  }
 
   handleLogin(event) {
     fetch(baseUrl + "verify/" + this.username.value)
@@ -84,6 +99,11 @@ export default class Navbar extends Component {
       .catch(error => console.log(error));
     event.preventDefault();
   }
+  
+  /* handleEditinfo(event) {
+
+  } */
+
 
   handleSignup(event) {    
     fetch(baseUrl + "register", {
@@ -124,10 +144,10 @@ export default class Navbar extends Component {
       <NavWrapper className="navbar navbar-expand-sm navbar-dark px-sm-5">                    
         <div className="align-items-center">
           <div className="ml-5">
-            <Link to="/list" className="nav-link">list of pphotoes</Link>
+            <Link to="/" className="nav-link">list of photoes</Link>
           </div>
           <div className="ml-5">
-            <Link to="/" className="nav-link">
+            <Link to="/camera" className="nav-link">
               taking photo
             </Link>
           </div>
@@ -143,9 +163,19 @@ export default class Navbar extends Component {
           </li>
         </ul>         */}
           {isLoggedIn ? (          
+            <div>
             <Button onClick={this.handleLogout} style={{ margin: "10px" }}>
               Log Out
             </Button>
+            <Link to="/editinfo" className="ml-auto">
+              <Button>
+                <span className="mr-2">
+                  <i className="fas fa-user-edit" />
+                </span>
+                Edit user info
+              </Button>
+            </Link>            
+            </div>            
         ) : (
           <div>
             <Button
@@ -205,8 +235,9 @@ export default class Navbar extends Component {
                 </FormGroup>
                 <Button type="submit" value="submit" color="primary">
                   Login
-                </Button>
+                </Button>                
               </Form>
+              <Button onClick={this.handleForget}>Did you forget your info?</Button>            
           </ModalBody>
           </Modal>
           <Modal isOpen={this.state.isSignupOpen} toggle={this.toggleSignup}>
@@ -260,11 +291,10 @@ export default class Navbar extends Component {
                   innerRef={input => (this.email = input)}
                 />
               </FormGroup>
-
               <Button type="submit" value="submit" color="primary">
                 Submit
-              </Button>
-            </Form>
+              </Button>              
+            </Form>            
           </ModalBody>
         </Modal>        
       </NavWrapper>
