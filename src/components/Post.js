@@ -31,19 +31,8 @@ class Posts extends Component {
     }      
     );
   }
-  /* fetchPosts = async page => {
-    let response = await fetch(baseUrl + "pictures/" + page);
-    const data = await response.json();
-
-    this.setState({
-      posts: data.pictures,
-      total: data.count,      
-      current_page: page,
-    });
-  }
-   */
-  componentWillMount() {
-    //this.props.fetchPosts(this.state.current_page);        
+  
+  componentWillMount() {  
     this.fetchPosts(1);    
   }  
 
@@ -67,18 +56,22 @@ class Posts extends Component {
     }
   }
 
-  /* RenderPage(count) {    
-    let pageNumbers = [];
-    for(let i = 0; i <= count/5; i++)
-      pageNumbers.push(i);
-    pageNumbers.map(number => {
-      let classes = this.state.current_page === number ? styles.active : '';    
-      return (
-        <span key={number} className={classes} onClick={() => this.props.fetchPosts(number)}>{number}</span>
-      );
-      });
-  } */
-  
+  previewFile(){
+    var preview = document.querySelector('img'); //selects the query named img
+    var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+    var reader  = new FileReader();
+
+    reader.onloadend = function () {
+        preview.src = reader.result;
+    }
+
+    if (file) {
+        reader.readAsDataURL(file); //reads the data as a URL
+    } else {
+        preview.src = "";
+    }
+}
+
   render() {  
     console.log("this.props.total: " + this.state.total);
     let pageNumbers = [];
@@ -92,36 +85,35 @@ class Posts extends Component {
           this.fetchPosts(number);             
         }}>{number}</span>
       );  
-      });    
-    //const postItems = this.props.posts.map(post => (      
+      });        
     const postItems = this.state.posts.map(post => (      
       <div key={post.id} className="col-md-8 col-md-5 m-1">        
       <Card>
         <CardImg top src={post.image} alt={post.username} />                 
-          <CardBody>
-          <Button outline color="warning" onClick={() =>{          
-          if(post.like === null){            
-            console.log(post.like);
-            this.props.postLike(post.id, localStorage.username + ", ");
-          } else if(post.like.includes(localStorage.username)) {
-            console.log('Already favorite'); 
-          } else {            
-            this.props.postLike(post.id, post.like + localStorage.username + ", ");            
-          }
-        }
-          }>
-              { post.like.includes(localStorage.username) ?
-                  <span className="fa fa-heart"></span>
-                  :  
-                  <span className="fa fa-heart-o"></span>
+          <CardBody>           
+            <Button outline color="warning" onClick={() =>{          
+              if ( localStorage.username === ""){
+                alert("Login firset")                
+              } else {
+                if(post.like === null){                        
+                  this.props.postLike(post.id, localStorage.username + ", ");
+                } else if(post.like.includes(localStorage.username)) {
+                  console.log('Already favorite'); 
+                } else {            
+                  this.props.postLike(post.id, post.like + localStorage.username + ", ");            
+                }
               }
+            }}>
+                { post.like.includes(localStorage.username) && localStorage.username !== "" ?
+                    <span className="fa fa-heart"></span>
+                    :  
+                    <span className="fa fa-heart-o"></span>
+                }
           </Button>          
             <CardTitle>{post.username}</CardTitle>
             <CardText>{post.date}</CardText>
             <FetchComments comments={post.comments} id={post.id} postComment={this.props.postComment} ></FetchComments>            
-            {this.RenderDel(post.username, post.id)}              
-            {/* <FetchComments comments={post.comments} /> */}
-          {/* <CommentForm id={post.id} postComment={this.props.postComment} />       */}
+            {this.RenderDel(post.username, post.id)}                
         </CardBody>        
       </Card>
       

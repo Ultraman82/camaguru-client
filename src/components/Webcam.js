@@ -7,7 +7,9 @@ export default class WebcamCapture extends React.Component {
     super(props);
     this.state = { 
       images: [],
-      icon:0
+      icon:0,
+      mode:"cam",
+      file:""
       };
   }
   setRef = webcam => {
@@ -139,6 +141,41 @@ export default class WebcamCapture extends React.Component {
     )
   }
 
+  
+  previewFile = (e) => {
+    let file    = Array.from(e.target.files)[0]; //sames as here    
+    var reader  = new FileReader();
+    
+    reader.onloadend = () => {
+      console.log(reader.result);
+      this.setState({
+        file:reader.result
+      });
+      //this.setState({file:reader.result});
+    }
+    reader.readAsDataURL(file)
+    //let image = URL.createObjectURL(file); 
+    //console.log(image);
+    //e.preventDefault()
+    //this.setState({file:image});  
+}
+
+  /* previewFile(e){
+    var file    = Array.from(e.target.files)[0]; //sames as here
+    console.log(file);
+    var reader  = new FileReader();
+
+    reader.onloadend = () => {
+        this.setState({file:reader.result});
+    }
+
+    if (file) {
+        reader.readAsDataURL(file); //reads the data as a URL
+    } else {
+        
+    }
+}
+ */
   render() {
     const videoConstraints = {
       width: 1280,
@@ -167,7 +204,10 @@ export default class WebcamCapture extends React.Component {
       return (            
         <div className="row">
           <div className="col-sm" style={{ position: "relative", left: "0", top: "0", margin:"50px" }}>
-            <Webcam
+            {
+              this.state.mode === "cam" ? 
+              <div>
+              <Webcam
               audio={false}
               height={500}
               ref={this.setRef}
@@ -175,9 +215,23 @@ export default class WebcamCapture extends React.Component {
               width={500}
               videoConstraints={videoConstraints}
               style={{ position: "relative", bottom: "110px", right: "15px"}}
-            />                    
-              {this.renderPic(this.state.icon)}          
-              {this.renderSelect()}
+            /> 
+            {this.renderPic(this.state.icon)}          
+            {this.renderSelect()}
+            </div>
+            : <div>
+                  <div  >File Screen</div>
+                  <input type="file" onChange={this.previewFile} /><br />
+                  <img width={500} src={this.state.file} alt="Image preview..."></img>
+                </div>                   
+            }
+              <button onClick={() => this.setState({mode:"file"})}>
+                File mode
+              </button>  
+              <button onClick={() => this.setState({mode:"cam"})}>
+                Cam mode
+              </button>            
+              
               <button onClick={this.capture}>Capture photo</button>
           </div>        
           <div className="col-sm">{snapshots}</div>
