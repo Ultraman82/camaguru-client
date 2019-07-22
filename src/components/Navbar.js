@@ -9,6 +9,8 @@ import {
   ModalBody,
   Form,
   FormGroup,
+  FormFeedback,
+  FormText,
   Input,
   Label
 } from "reactstrap";
@@ -63,7 +65,8 @@ export default class Navbar extends Component {
     fetch(baseUrl + "verify/" + this.username.value)
       .then(response => response.json())
       .then(response => {
-        if (response) {
+        console.log(response);
+        if (response === true) {
           fetch(baseUrl + "auth", {
             method: "POST",
             headers: {
@@ -93,8 +96,11 @@ export default class Navbar extends Component {
               }
             })
             .catch(error => console.log(error));
-        }
-        else{
+        } else if (response.message === "User does not exist"){
+          alert("User does not exist");
+        } else if (response.status_code === 401) {
+          alert("Invalid Cridential");
+        } else if (response === false) {
           alert("You need to verify your email fisrt.")
         }
       }) 
@@ -246,17 +252,8 @@ export default class Navbar extends Component {
                   name="username"
                   innerRef={input => (this.username = input)}
                 />
-              </FormGroup>
+              </FormGroup>              
               <FormGroup>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  innerRef={input => (this.password = input)}
-                />
-              </FormGroup>
-              {/* <FormGroup>
                 <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
@@ -275,7 +272,7 @@ export default class Navbar extends Component {
                   Must contain at least one number and one uppercase and
                   lowercase letter, and at least 8 or more characters
                 </FormText>
-              </FormGroup> */}
+              </FormGroup>
               <FormGroup>
                 <Label htmlFor="email">Email</Label>
                 <Input
