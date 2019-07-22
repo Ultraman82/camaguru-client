@@ -7,6 +7,7 @@ import Posts from "./components/Post";
 import Navbar from "./components/Navbar";
 import EditInfo from "./components/EditInfo";
 import WebcamCapture from "./components/Webcam";
+import Footer from "./components/Footer"
 import store from "./store";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route exact path="/" component={Posts} />                                                                
       </Provider>
       </Switch>
+    <Footer/>
     </BrowserRouter>
     </React.Fragment>
   );

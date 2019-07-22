@@ -82,8 +82,10 @@ export default class Navbar extends Component {
                   username: this.username.value,
                   token: response.access_token,                  
                 });
-                localStorage.username = this.username.value;
+                localStorage.username = this.username.value;                
                 localStorage.token = response.access_token;
+                window.location.reload();
+                alert(`Welcome, ${this.username.value}`)
               } else if (response.status_code === 401) {
                 alert("Invalid Cridential");
               } else {
@@ -136,13 +138,18 @@ export default class Navbar extends Component {
     localStorage.removeItem("token");
     localStorage.username = "";
     this.setState({ username: "" });
+    window.location.reload();
   }
 
   render() {
     const isLoggedIn = this.state.username !== "";    
     return (
       <NavWrapper className="navbar navbar-expand-sm navbar-dark px-sm-5">                    
-        <div className="align-items-center">
+        <div className="row align-items-center">          
+            <Link to="/" className="ml-5 nav-link">list of photoes</Link>          
+            <Link style={{marginRight:"100px"}} to="/camera" className="ml-5 nav-link">taking photo</Link>          
+        </div>
+{/*         <div className="align-items-center">
           <div className="ml-5">
             <Link to="/" className="nav-link">list of photoes</Link>
           </div>
@@ -151,27 +158,14 @@ export default class Navbar extends Component {
               taking photo
             </Link>
           </div>
-        </div>        
-        {/* <ul className="navbar-nav align-items-center">
-          <li className="nav-item ml-5">
-          <Link to="/" className="nav-link">Taking Photoes</Link>
-          </li>
-          <li className="nav-item ml-5">
-            <Link to="/list" className="nav-link">
-              List of Photoes
-            </Link>
-          </li>
-        </ul>         */}
+        </div>         */}
           {isLoggedIn ? (          
             <div>
             <Button onClick={this.handleLogout} style={{ margin: "10px" }}>
               Log Out
             </Button>
             <Link to="/editinfo" className="ml-auto">
-              <Button>
-                <span className="mr-2">
-                  <i className="fas fa-user-edit" />
-                </span>
+              <Button>                  
                 Edit user info
               </Button>
             </Link>            

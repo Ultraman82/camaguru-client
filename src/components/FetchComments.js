@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {   
-  Modal, ModalHeader, ModalBody, Button, Row } from 'reactstrap';
+  Modal, ModalHeader, ModalBody, Button } from 'reactstrap';
 
 
 class FetchComments extends Component{
@@ -51,8 +51,7 @@ class FetchComments extends Component{
             <div>
             {postComments}
             </div>
-
-              <Row className="form-group">
+              <div className="form-group">
                   <Button outline onClick={() =>{
                     if (localStorage.username)
                       this.toggleModal();
@@ -60,7 +59,7 @@ class FetchComments extends Component{
                       alert("Log in first") 
                     }}>
                       <span className="fa fa-edit fa-lg"></span> Submit a comment</Button>                
-              </Row>
+              </div>
               <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                   <ModalHeader >Comment</ModalHeader>
                     <ModalBody>

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { ButtonContainer } from "./Button";
+import { ButtonGroup, Button } from "reactstrap";
 import { baseUrl } from "../actions/baseUrl";
 const wp = require('whirlpool-js');
 
@@ -11,6 +10,7 @@ export default class EditDetail extends Component {
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);    
     this.onSubmit = this.onSubmit.bind(this);
+    this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
 
     this.state = {
       username: "",
@@ -24,15 +24,16 @@ export default class EditDetail extends Component {
   componentWillMount() {        
     fetch(`${baseUrl}user/${localStorage.username}`)
       .then(response => response.json())
-      .then(response => {
-        console.log(response);
+      .then(response => {        
         this.setState({
-          ...response
-        });        
-        console.log(this.state);
+          ...response, password:""
+        });                
       })
-      .catch(error => console.log("error:", error));
-      
+      .catch(error => console.log("error:", error));      
+  }
+
+  onRadioBtnClick(rSelected) {
+    this.setState({ notify: rSelected });
   }
 
   onChangeUsername(e) {
@@ -55,14 +56,11 @@ export default class EditDetail extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    /* this.editItem(); */
-    console.log(this.state);
-    //console.log("save cart parse : ", JSON.parse(this.state.cart.toString()));
-    //console.log(this.state.username);
      fetch(`${baseUrl}user/${this.state.username}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
+      headers: {        
+        "Content-Type": "application/json",
+        "Authorization": "JWT " + localStorage.token
       },
       body: JSON.stringify({
         username: this.state.username,
@@ -122,7 +120,12 @@ export default class EditDetail extends Component {
                   value={this.state.password}
                   onChange={this.onChangePassword}
                 />
-              </div>              
+              </div>             
+              <ButtonGroup>
+                <Button color="success" onClick={() => this.onRadioBtnClick(true)} active={this.state.rSelected === true}>On</Button>
+                <Button onClick={() => this.onRadioBtnClick(false)} active={this.state.rSelected === false}>Off</Button>                
+              </ButtonGroup>
+              <p>Notify: {this.state.notify ? "On":"Off"}</p> 
               <div className="form-group">
                 <input
                   type="submit"

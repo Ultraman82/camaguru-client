@@ -13,8 +13,7 @@ export const fetchPosts = (page) => dispatch => {
     );
 };
 
-export const postLike = (image_id, like) => dispatch =>{
-  console.log("username from postLike: " + like)
+export const postLike = (image_id, like) => dispatch =>{  
   fetch(baseUrl + "addlike/" + image_id, {
     method: "PUT",
     headers: {
@@ -30,7 +29,6 @@ export const postLike = (image_id, like) => dispatch =>{
 };
 
 export const postComment = (image_id, comment) => dispatch =>{
-//  console.log("username from postLike: " + like)
   fetch(baseUrl + "addcomment/" + image_id, {
     method: "PUT",
     headers: {
@@ -45,8 +43,7 @@ export const postComment = (image_id, comment) => dispatch =>{
     .then(res => console.log(res));
 };
 
-export const deletePost = (image_id) => dispatch =>{
-    console.log("DeletePost");
+export const deletePost = (image_id) => dispatch =>{    
     fetch(baseUrl + "deletepost/" + image_id, {
       method: "DELETE",
       headers: {        

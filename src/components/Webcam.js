@@ -1,8 +1,9 @@
 import React from "react";
 import Webcam from "react-webcam";
 import { baseUrl } from "../actions/baseUrl";
+import { ButtonGroup, Button } from "reactstrap";
 
-export default class WebcamCapture extends React.Component {
+  export default class WebcamCapture extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
@@ -20,14 +21,16 @@ export default class WebcamCapture extends React.Component {
     this.setState({username:localStorage.username})
   }
 
-  capture = () => {
-    /* let added = this.state.images.concat(this.webcam.getScreenshot()); */
-    this.setState({
-      images: [...this.state.images, {image:this.webcam.getScreenshot(), icon:this.state.icon}],      
-    });
-    /* this.setState({
-      images: added
-    }); */
+  capture = () => {    
+    if (this.state.mode === "file"){
+      this.setState({
+        images: [...this.state.images, {image:this.state.file, icon:this.state.icon}],      
+      });
+    } else {
+      this.setState({
+        images: [...this.state.images, {image:this.webcam.getScreenshot(), icon:this.state.icon}],      
+      });
+    }
   };
   pushImage = (index, icon) => {
     //console.log(this.state.images[index]);
@@ -60,14 +63,25 @@ export default class WebcamCapture extends React.Component {
   handleDelete = (index, icon) => {        
     return(
       <div>
-        <button onClick={() => this.setState({images: this.state.images.filter(image => index !== this.state.images.indexOf(image))})}>Delete Item</button>
+        <ButtonGroup vertical>
+          <Button color="danger" onClick={() => this.setState({images: this.state.images.filter(image => index !== this.state.images.indexOf(image))})}>Delete</Button>
+          <Button color="success" onClick={() => {
+            if (localStorage.username)
+              this.pushImage(index, icon)
+            else
+              alert("Log in first") 
+            }
+          }>Post</Button>
+          
+        </ButtonGroup>
+        {/* <button onClick={() => this.setState({images: this.state.images.filter(image => index !== this.state.images.indexOf(image))})}>Delete Item</button>
         <button onClick={() => {
             if (localStorage.username)
               this.pushImage(index, icon)
             else
               alert("Log in first") 
             }
-          }>Post Item</button>
+          }>Post Item</button> */}
       </div>
       
     );
@@ -146,36 +160,13 @@ export default class WebcamCapture extends React.Component {
     let file    = Array.from(e.target.files)[0]; //sames as here    
     var reader  = new FileReader();
     
-    reader.onloadend = () => {
-      console.log(reader.result);
+    reader.onloadend = () => {      
       this.setState({
         file:reader.result
-      });
-      //this.setState({file:reader.result});
+      });      
     }
-    reader.readAsDataURL(file)
-    //let image = URL.createObjectURL(file); 
-    //console.log(image);
-    //e.preventDefault()
-    //this.setState({file:image});  
-}
-
-  /* previewFile(e){
-    var file    = Array.from(e.target.files)[0]; //sames as here
-    console.log(file);
-    var reader  = new FileReader();
-
-    reader.onloadend = () => {
-        this.setState({file:reader.result});
-    }
-
-    if (file) {
-        reader.readAsDataURL(file); //reads the data as a URL
-    } else {
-        
-    }
-}
- */
+    reader.readAsDataURL(file)    
+}  
   render() {
     const videoConstraints = {
       width: 1280,
@@ -202,7 +193,7 @@ export default class WebcamCapture extends React.Component {
 
     if(this.state.username !== ""){
       return (            
-        <div className="row">
+        <div className="row" style={{marginTop:"50px"}}>
           <div className="col-sm" style={{ position: "relative", left: "0", top: "0", margin:"50px" }}>
             {
               this.state.mode === "cam" ? 
@@ -215,24 +206,21 @@ export default class WebcamCapture extends React.Component {
               width={500}
               videoConstraints={videoConstraints}
               style={{ position: "relative", bottom: "110px", right: "15px"}}
-            /> 
-            {this.renderPic(this.state.icon)}          
-            {this.renderSelect()}
+            />             
             </div>
             : <div>
+                  <img width={500} style={{marginBottom:"200px", position: "relative", right:"15px"}} src={this.state.file} alt="static_img"/>
                   <div  >File Screen</div>
-                  <input type="file" onChange={this.previewFile} /><br />
-                  <img width={500} src={this.state.file} alt="Image preview..."></img>
+                  <input type="file" onChange={this.previewFile} /><br />                  
                 </div>                   
             }
-              <button onClick={() => this.setState({mode:"file"})}>
-                File mode
-              </button>  
-              <button onClick={() => this.setState({mode:"cam"})}>
-                Cam mode
-              </button>            
-              
-              <button onClick={this.capture}>Capture photo</button>
+              {this.renderPic(this.state.icon)}          
+              {this.renderSelect()}
+              <ButtonGroup>
+                <Button color="success" onClick={() => this.setState({mode:"file"})} active={this.state.mode === "file"}>File</Button>
+                <Button color="primary" onClick={() => this.setState({mode:"cam"})} active={this.state.mode === "cam"}>Camera</Button>                
+                <Button color="warning" onClick={this.capture}>Capture</Button>                
+              </ButtonGroup>
           </div>        
           <div className="col-sm">{snapshots}</div>
         </div>
