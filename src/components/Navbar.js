@@ -22,8 +22,8 @@ export default class Navbar extends Component {
     this.state = {
       isModalOpen: false,
       isSignupOpen: false,
-      username: "",
-      token: "",
+      username: null,
+      token: null,
       notify: true
     };
     this.toggleModal = this.toggleModal.bind(this);
@@ -54,10 +54,13 @@ export default class Navbar extends Component {
       fetch(baseUrl + "resetpass/" + encodeURI(email), {method: "POST"})
       .then(response => response.json())
       .then(response => {                
-        console.log(response);      
+        if (response.message === "Password reset email has been sent")
+          alert("Check your email to see your temporal password");
+        else if (response.message === "No matched user has found")
+          alert("No matched user has found");
       })
-      .catch(error => console.log(error));
-      alert("Check your email to see your temporal password");
+      /* .catch(error => console.log(error)); */
+      
     }
   }
 
@@ -142,29 +145,20 @@ export default class Navbar extends Component {
 
   handleLogout() {
     localStorage.removeItem("token");
-    localStorage.username = "";
-    this.setState({ username: "" });
+    localStorage.removeItem("username");
+    //  localStorage.username = null;
+    this.setState({ username: null });
     window.location.reload();
   }
 
   render() {
-    const isLoggedIn = this.state.username !== "";    
+    const isLoggedIn = this.state.username !== undefined;    
     return (
       <NavWrapper className="navbar navbar-expand-sm navbar-dark px-sm-5">                    
         <div className="row align-items-center">          
             <Link to="/" className="ml-5 nav-link">list of photoes</Link>          
             <Link style={{marginRight:"100px"}} to="/camera" className="ml-5 nav-link">taking photo</Link>          
         </div>
-{/*         <div className="align-items-center">
-          <div className="ml-5">
-            <Link to="/" className="nav-link">list of photoes</Link>
-          </div>
-          <div className="ml-5">
-            <Link to="/camera" className="nav-link">
-              taking photo
-            </Link>
-          </div>
-        </div>         */}
           {isLoggedIn ? (          
             <div>
             <Button onClick={this.handleLogout} style={{ margin: "10px" }}>
@@ -212,32 +206,13 @@ export default class Navbar extends Component {
                     innerRef={input => (this.password = input)}
                   />
                 </FormGroup>
-                {/* <FormGroup>
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    type="password"
-                    id="password"
-                    name="password"
-                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                    required
-                  />
-                </FormGroup> */}
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      type="checkbox"
-                      name="remember"
-                      innerRef={input => (this.remember = input)}
-                    />
-                    Remember me
-                  </Label>
-                </FormGroup>
-                <Button type="submit" value="submit" color="primary">
+                  <Button type="submit" value="submit" color="primary">
                   Login
                 </Button>                
-              </Form>
-              <Button onClick={this.handleForget}>Did you forget your info?</Button>            
+                <Button style={{float:"right"}} onClick={this.handleForget}>Did you forget your password?</Button>                                      
+                  
+              </Form>              
+              
           </ModalBody>
           </Modal>
           <Modal isOpen={this.state.isSignupOpen} toggle={this.toggleSignup}>

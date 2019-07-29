@@ -13,7 +13,7 @@ export default class EditDetail extends Component {
     this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
 
     this.state = {
-      username: "",
+      username: undefined,
       email: "",
       password: "",
       notify: null,
@@ -21,15 +21,19 @@ export default class EditDetail extends Component {
     };
   }
 
-  componentWillMount() {        
-    fetch(`${baseUrl}user/${localStorage.username}`)
+  componentWillMount() {
+    if(localStorage.username === "" || localStorage.username === undefined)
+      alert("Log in first")
+    else{
+      fetch(`${baseUrl}user/${localStorage.username}`)
       .then(response => response.json())
       .then(response => {        
         this.setState({
-          ...response, password:""
-        });                
+          ...response
+        })
       })
-      .catch(error => console.log("error:", error));      
+      .catch(error => console.log("error:", error));
+    }
   }
 
   onRadioBtnClick(rSelected) {
@@ -56,35 +60,39 @@ export default class EditDetail extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-     fetch(`${baseUrl}user/${this.state.username}`, {
-      method: "PUT",
-      headers: {        
-        "Content-Type": "application/json",
-        "Authorization": "JWT " + localStorage.token
-      },
-      body: JSON.stringify({
-        username: this.state.username,
-        password: wp.encSync(this.state.password, 'hex'),
-        notify: this.state.notify,
-        email: this.state.email,
-        verified: this.state.verified        
+    if(localStorage.username !== "" && localStorage.username !== undefined)
+    {
+      fetch(`${baseUrl}user/${this.state.username}`, {
+        method: "PUT",
+        headers: {        
+          "Content-Type": "application/json",
+          "Authorization": "JWT " + localStorage.token
+        },
+        body: JSON.stringify({
+          username: this.state.username,
+          password: wp.encSync(this.state.password, 'hex'),
+          notify: this.state.notify,
+          email: this.state.email,
+          verified: this.state.verified        
+        })
       })
-    })
-      .then(response => response.json())
-      .then(response => {
-        if (response.message === "Info has successfuly updated") {
-          alert("Info has successfuly updated");
-        }       
-      })
-      .catch(error => console.log("error:", error));
+        .then(response => response.json())
+        .then(response => {
+          if (response.message === "Info has successfuly updated") {
+            alert("Info has successfuly updated");
+          }       
+        })
+        .catch(error => console.log("error:", error));
+    }
+    else{
+      alert("Login First");
+    }     
   }
 
   render() {    
     return (
       <div className="container py-5">
-        <div className="row">
-          <div className="co-10 mx-auto col-md-6 my-3">            
-          </div>
+        <div className="row">          
           <div className="co-10 mx-auto col-md-6 my-3">
             <h4 className="text-blue">
               <strong>
@@ -113,14 +121,36 @@ export default class EditDetail extends Component {
                 />
               </div>              
               <div className="form-group">
-                <label>password: </label>
+                <label>password: Must contain at least one number and one uppercase and
+                  lowercase letter, and at least 8 or more characters</label>
                 <input
                   type="password"
                   className="form-control"
+                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   value={this.state.password}
                   onChange={this.onChangePassword}
                 />
               </div>             
+              {/* <FormGroup>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  type="password"
+                  id="password"
+                  name="password"
+                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                  title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                  innerRef={input => (this.password = input)}
+                  required
+                />
+                <FormFeedback>
+                  Must contain at least one number and one uppercase and
+                  lowercase letter, and at least 8 or more characters
+                </FormFeedback>
+                <FormText>
+                  Must contain at least one number and one uppercase and
+                  lowercase letter, and at least 8 or more characters
+                </FormText>
+              </FormGroup> */}
               <ButtonGroup>
                 <Button color="success" onClick={() => this.onRadioBtnClick(true)} active={this.state.rSelected === true}>On</Button>
                 <Button onClick={() => this.onRadioBtnClick(false)} active={this.state.rSelected === false}>Off</Button>                

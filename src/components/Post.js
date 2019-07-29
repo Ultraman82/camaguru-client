@@ -7,7 +7,6 @@ import FetchComments from './FetchComments';
 import styles from './App.module.css';
 import { baseUrl } from "../actions/baseUrl";
 
-
 class Posts extends Component {
   constructor(props) {
     super(props);
@@ -34,13 +33,7 @@ class Posts extends Component {
   componentWillMount() {  
     this.fetchPosts(1);    
   }  
-
-  /* componentWillReceiveProps(nextProps) {
-    if (nextProps.newPost) {
-      this.props.posts.unshift(nextProps.newPost);
-    }
-  } */  
-
+  
   RenderDel(username, id) {
     if (username === localStorage.username) {
       return (
@@ -74,23 +67,27 @@ class Posts extends Component {
           <CardBody>           
               <Row className="justify-content-between" style={{margin:"2px"}}>
                 <Button outline className="align-self-start" color="warning" onClick={() =>{          
-                  if ( localStorage.username === ""){
-                    alert("Login firset")                
+                  if ( localStorage.username === "" || localStorage.username === undefined){                    
+                    alert("Login firset");                
                   } else {
                     if(post.like === null){                        
                       this.props.postLike(post.id, localStorage.username + ", ");
+                      //this.forceUpdate();
+                      window.location.reload(); 
                     } else if(post.like.includes(localStorage.username)) {
-                      console.log('Already favorite'); 
+                      alert('Already favorite'); 
                     } else {            
                       this.props.postLike(post.id, post.like + localStorage.username + ", ");            
+                      //this.forceUpdate();
+                      window.location.reload(); 
                     }
                   }
                 }}>
-                    { post.like.includes(localStorage.username) && localStorage.username !== "" ?
+                  { post.like.includes(localStorage.username) && localStorage.username !== undefined ?
                         <span className="fa fa-heart"></span>
                         :  
                         <span className="fa fa-heart-o"></span>
-                    }                    
+                    }
               </Button>                                                          
               {this.RenderDel(post.username, post.id)}                
             </Row>                      
